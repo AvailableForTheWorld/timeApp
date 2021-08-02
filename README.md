@@ -1,4 +1,4 @@
 # 运行指令
-## yarn install
-## yarn build
-## yarn start
+1. yarn install
+2. yarn build
+3. yarn start
