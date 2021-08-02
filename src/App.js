@@ -1,25 +1,92 @@
-import logo from './logo.svg';
-import './App.css';
+import Countdown from './Countdown'
+import Todo from './Todo'
+import Progress from './progress'
+import React from 'react';
+import TimeLine from './TimeLine'
+import FinishedTask from './FinishedTask';
+import Goals2 from './Goals2'
+import  "./App.css"
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends React.Component {
+  constructor(){
+    super()
+    this.state={
+      taskQue:[],
+      t:0,
+      nowTrans:0,
+      finishFlag:false,
+      taskItem:""
+    }
+  }
+  handleQue=(item)=>{
+    let que = this.state.taskQue
+    que.push(item[0])
+    // console.log(item[0])
+    this.setState({
+      taskQue:que,
+      t:item[0].spending*60,
+      taskItem:item[0].item,
+      nowTrans:0
+    })
+  }
+  handleCurTime=(trans)=>{
+    this.setState({
+      nowTrans:trans
+    })
+    // console.log("the origin trans:   "+trans)
+  }
+  isFinished = (flag)=> {
+    this.setState({
+      finishFlag: flag
+    })
+  }
+  handleWork=(item,trans)=>{
+    this.setState({
+      taskItem:item,
+      t:trans*60
+    })
+    
+  }
+  render(){
+    const styleMiddle = {
+      position:'absolute',
+      
+      bottom:0,
+      
+    }
+    return (
+      
+        <div className="App">
+          <div className="title">
+          <TimeLine />
+          </div>
+          
+          <div style={{display:'flex',margin:50,justifyContent:'space-around'}}>          
+            <Goals2 getGoalsTask={this.handleWork.bind(this)}/> 
+            <Todo getItem={this.handleQue.bind(this)} ></Todo>
+          </div>
+
+          <div style={{position:'fixed',bottom:'30%'}}>
+            <FinishedTask flag={this.state.finishFlag} trans={this.state.nowTrans} controlFlag={this.isFinished} taskItem={this.state.taskItem}/>
+          
+          </div>
+          
+            
+           <div style={{...styleMiddle,width:'100%'}} >
+           <div >
+            <Countdown s={this.state.t} taskName={this.state.taskItem} 
+                getCurTime={this.handleCurTime} judgeFinished={this.isFinished}/>
+            </div>
+           <Progress nums={this.state.t} index={this.state.nowTrans} Color1={'#00CCFF'} Color2={'#AEDD81'} width={'100%'} backColor={'rgb(253, 204, 204)'}/>
+           </div>
+             
+
+  
+        </div>
+      
+    )
+  }
+  
 }
 
 export default App;
