@@ -1,16 +1,24 @@
 import React from 'react'
-
+import Axios from "axios"
 class Goals2 extends React.Component {
     constructor(props){
         super(props)
         this.goals=React.createRef()
         this.state={
-            goalsQue:[],
+            // goalsQue:[],
             isBtnShow:false,
             handleIndex:-1,
-            handleI:-1
+            handleI:-1,
+            // db:[],
+            goal:[],
+            task:[],
+            status:[],
+            goallist:new Map(),
+            bgcolor1:['#e4f9f5','#f6f6f6','#a8e6cf','#30e3ca','#99ddcc','#11999e']
         }
+        
     }
+    
     randomColor(){
         const color="0123456789ABCDEF"
         let res=""
@@ -19,20 +27,82 @@ class Goals2 extends React.Component {
         }
         return res
     }
-    handleSubmit=(e)=>{
-
-        e.preventDefault()
-        let goalsQue = this.state.goalsQue
-        let goalsItem=[]
-        goalsItem.push(this.goals.current.value)
-        goalsQue.push(goalsItem)
-        this.goals.current.focus()
-        this.goals.current.value=""
-        console.log(goalsQue)
-        this.setState({
-            goalsQue
+    Get=()=>{
+        Axios.get("http://localhost:3001/data").then((res)=>{
+            
+            let data = res.data
+            let goal=[],status=[],goallist=new Map(),tasklist=[],cnt=0
+            data.map((item,index)=>{
+                if(goallist[item.goal]===undefined){
+                    goallist[item.goal]=cnt
+                    cnt = cnt+1
+                    goal.push(item.goal)
+                }
+                if(!tasklist[goallist[item.goal]]){
+                    tasklist[goallist[item.goal]]=[item.task]
+                }else{
+                    tasklist[goallist[item.goal]].push(item.task)
+                }
+                status.push(item.status)
+                return null;
+            })
+            console.log("get")
+            this.setState({
+                goal,
+                tasklist,
+                status,
+                goallist
+            })
+        })
+    }
+    initGet=()=>{
+        Axios.get("http://localhost:3001/data").then((res)=>{
+            
+            let data = res.data
+            let goal=[],status=[],goallist=new Map(),tasklist=[],cnt=0
+            
+            data.map((item,index)=>{
+                if(goallist[item.goal]===undefined){
+                    // console.log(goallist[item.goal])
+                    goallist[item.goal]=cnt
+                    cnt = cnt+1
+                    goal.push(item.goal)
+                }
+                if(!tasklist[goallist[item.goal]]){
+                    tasklist[goallist[item.goal]]=[item.task]
+                }else{
+                    tasklist[goallist[item.goal]].push(item.task)
+                }
+                status.push(item.status)
+                return null;
+            })
+            
+            console.log(goal)
+            this.setState({
+                goal,
+                tasklist,
+                status,
+                goallist
+            })
+            
         })
         
+    }
+    handleSubmit=(e)=>{
+        e.preventDefault()
+        
+        console.log(this.state.goallist)
+        if(!this.goals.current.value||this.state.goallist[this.goals.current.value]!==undefined){
+            this.Get()
+            this.goals.current.value=""
+            return null;
+        } 
+        const that = this
+        Axios.post("http://localhost:3001/goals",{goal:this.goals.current.value})
+        .then(function(){
+            that.Get()
+        })
+        this.goals.current.value=""
     } 
     isShowIndex=(index)=>{
         if(!this.state.isBtnShow||(this.state.handleIndex!==index)||this.state.handleI!==-1){
@@ -44,8 +114,8 @@ class Goals2 extends React.Component {
         return null
     }
 
-    isShowI=(i)=>{
-        if(!this.state.isBtnShow||(this.state.handleI!==i+2)){
+    isShowI=(...args)=>{
+        if(!this.state.isBtnShow||(this.state.handleI!==args[1])||this.state.handleIndex!==args[0]){         
             const eleStyle = {
                 display:'none'
             }
@@ -56,6 +126,7 @@ class Goals2 extends React.Component {
 
 
     handleMouseEnter=(...args)=>{
+        
         if(args.length===1)
             this.setState({
                 isBtnShow:true,
@@ -68,7 +139,6 @@ class Goals2 extends React.Component {
                 handleIndex:args[0],
                 handleI:args[1]
             })
-            console.log(args[1])
         }
     }
     handleMouseLeave=()=>{
@@ -104,16 +174,42 @@ class Goals2 extends React.Component {
         return itemStyle
     }
     addTask=(index)=>{
-        let goalsQue =this.state.goalsQue
-        goalsQue[index].push(this.goals.current.value)
-        this.setState({goalsQue})
+        console.log(index)
+        let goal = this.state.goal[index]
+        const task = this.goals.current.value
+        if(task==="")
+            return null;        
+        const that = this
+        if(!this.state.tasklist[index][0]){
+            
+            Axios.post("http://localhost:3001/update-goals",{
+                goal:goal,
+                task:task,
+                status:0
+            }).then(function(){
+               
+                that.Get()
+            })
+        }
+        else{
+
+            Axios.post("http://localhost:3001/goals",{goal:goal,task:task,status:0})
+            .then(function(){
+                that.Get()
+            })
+        }
         this.goals.current.value=""
+        this.goals.current.focus()
     }
     handleWork=(index,i)=>{
-        let item = this.state.goalsQue[index][i]
+        let item = this.state.tasklist[index][i]
         let trans = this.goals.current.value
         this.props.getGoalsTask(item,trans)
         this.goals.current.value=""
+    }
+    componentDidMount(){
+        // this.Get()
+        this.initGet()
     }
     render(){
          
@@ -123,27 +219,31 @@ class Goals2 extends React.Component {
                     <input type="text" placeholder="input your goals" ref={this.goals} />
                     <input type="submit" value="Go"/>
                 </form>
+                
                 {
-                    this.state.goalsQue.map((item,index)=>{
-                        return (<div key={index} >
-                            <span style={{...this.handleColor(index),color:'black'}} onMouseEnter={()=>this.handleMouseEnter(index)} 
-                        onMouseLeave={this.handleMouseLeave}>{item[0]}
+                
+                    this.state.goal.map((item,index)=>{
+                        return (<div key={index} style={{height:30}}>
+                            <span  onMouseEnter={()=>this.handleMouseEnter(index)} 
+                        onMouseLeave={this.handleMouseLeave}><span style={{display:'inline-block',padding:'0 10px 0 10px',height:'100%',lineHeight:'30px',backgroundColor:`${this.state.bgcolor1[index%this.state.bgcolor1.length]}`}}>{item}</span>
                                 <button style={this.isShowIndex(index)} onClick={()=>this.addTask(index)}>add</button>
                             </span>
                             
                             <span >
                                 {
-                                    item.map((value,i)=>{
-                                        if(i>1)
-                                            return <span style={this.handleColor(index)} key={i} onMouseEnter={()=>this.handleMouseEnter(index,i)} 
-                                            onMouseLeave={this.handleMouseLeave}>{value}<button style={this.isShowI(index,i)} onClick={()=>this.handleWork(index,i)}>work</button></span>
-                                        else 
-                                            return null
-                                    })
+                                    this.state.tasklist[index]?
+                                    this.state.tasklist[index].map((val,i)=>{
+                                        return <span key={i} onMouseEnter={()=>this.handleMouseEnter(index,i)} 
+                                        onMouseLeave={this.handleMouseLeave}><span style={{display:'inline-block',padding:'0 10px 0 10px',height:'100%',lineHeight:'30px',backgroundColor:`${this.state.bgcolor1[index%this.state.bgcolor1.length]}`}}>{val}</span>
+                                        <button style={this.isShowI(index,i)} onClick={()=>this.handleWork(index,i)}>work</button>
+                                        </span>
+                                    })                                    
+                                    :null
                                 }
                             </span>
                         </div>);
                     })
+                
                 }
             </div>
         )

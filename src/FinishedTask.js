@@ -1,3 +1,4 @@
+import Axios from 'axios'
 import React from 'react' 
 
 class FinishedTask extends React.Component {
@@ -13,7 +14,10 @@ class FinishedTask extends React.Component {
             timeStart:0,
             panel:[],
             isShow:false,
-            hoverIndex:-1
+            hoverIndex:-1,
+            item:[],
+            end_time:[],
+            duration:[]
         }
     }
     randomColor(){
@@ -67,15 +71,36 @@ class FinishedTask extends React.Component {
             hoverIndex:-1
         })
     }
-    handlePanel=(index)=>{
-        if(index===this.state.hoverIndex&&this.state.isShow){
-            // console.log(index)
-            return (<div>
-                <div>开始时间：{this.state.panel[index].startTime.toLocaleTimeString()}</div>
-                <div>用时：{this.state.panel[index].trans}</div>
-                </div>)
-        }else
-            return;
+    // handlePanel=async(item,index)=>{
+    //     if(index===this.state.hoverIndex&&this.state.isShow){
+    //         // console.log(index)
+    //         let end_time,trans;
+    //         await 
+    //         return (<div>
+    //             <div>完成时间：{end_time}</div>
+    //             <div>用时：{trans}</div>
+    //             </div>)
+    //     }else
+    //         return null;
+    // }
+
+    Get=()=>{
+        Axios.get('http://localhost:3001/finished-list').then((res)=>{
+                let data = res.data
+                let end_time=[],duration=[],item=[]
+                console.log("hello")
+                data.map((val,index)=>{
+                    end_time.push(val.end_time)
+                    duration.push(val.duration)
+                    item.push(val.item)
+                    return null;
+                })
+                this.setState({
+                    end_time,
+                    duration,
+                    item
+                })
+            })
     }
     componentDidUpdate(prevProps){
         if(this.state.oneTimeFlag&&prevProps.trans!==this.props.trans){
@@ -96,12 +121,19 @@ class FinishedTask extends React.Component {
                     oneTimeFlag:1
                 })
                 this.pushTask()
+                this.Get()
             },0)
             
             this.props.controlFlag(false)
             // console.log("ok that's fine"+this.props.trans)
             
+            
+
         }
+        
+    }
+    componentDidMount(){
+        this.Get()
     }
     render(){
         // console.log("is rendered")
@@ -113,9 +145,7 @@ class FinishedTask extends React.Component {
         const whiteFont ={
             color:'white'
         }
-        // const inlineStyle ={
-        //     display:'inline-block'
-        // }
+        
         return (
             <div>
                 <div>
@@ -124,12 +154,24 @@ class FinishedTask extends React.Component {
                             // console.log("loop index: "+index)
                             return <div style={style1} key={index} onMouseEnter={()=>{this.handleMouseEnter(index)}} onMouseLeave={()=>this.handleMouseLeave()}>
                                         <div style={{...style1,...whiteFont}}>{item}</div>
-                                    <div style={style1}>{this.handlePanel(index)}</div>
+                                    {/* <div style={style1}>{this.handlePanel(item,index)}</div> */}
+                                    
                             </div>
                         })
                     }
                 </div>
-                
+                <div>
+                    {
+                        this.state.end_time.map((item,index)=>{
+                            return <div>
+                                
+                                <div>{this.state.item[index]}</div>
+                                <div>{item}</div>
+                                <div>{this.state.duration[index]}秒</div>
+                            </div>
+                        })
+                    }
+                </div>
             </div>
         )
     }

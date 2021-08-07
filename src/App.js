@@ -1,9 +1,9 @@
 import Countdown from './Countdown'
-import Todo from './Todo'
+import Todo2 from './Todo2'
 import Progress from './progress'
 import React from 'react';
 import TimeLine from './TimeLine'
-import FinishedTask from './FinishedTask';
+import FinishedTask2 from './FinishedTask2';
 import Goals2 from './Goals2'
 import  "./App.css"
 
@@ -55,7 +55,6 @@ class App extends React.Component {
       
     }
     return (
-      
         <div className="App">
           <div className="title">
           <TimeLine />
@@ -63,12 +62,12 @@ class App extends React.Component {
           
           <div style={{display:'flex',margin:50,justifyContent:'space-around'}}>          
             <Goals2 getGoalsTask={this.handleWork.bind(this)}/> 
-            <Todo getItem={this.handleQue.bind(this)} ></Todo>
+            <Todo2 getItem={this.handleQue.bind(this)} ></Todo2>
           </div>
 
           <div style={{position:'fixed',bottom:'30%'}}>
-            <FinishedTask flag={this.state.finishFlag} trans={this.state.nowTrans} controlFlag={this.isFinished} taskItem={this.state.taskItem}/>
-          
+            <FinishedTask2 flag={this.state.finishFlag} trans={this.state.nowTrans} controlFlag={this.isFinished} taskItem={this.state.taskItem}/>
+ 
           </div>
           
             

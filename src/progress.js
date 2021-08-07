@@ -10,7 +10,6 @@ export default class Progress extends Component {
         }
     }
     componentDidUpdate(prevProps) {
-        // 典型用法（不要忘记比较 props）：
         if (this.props.index !== prevProps.index) {
             
           this.setState({
@@ -22,7 +21,6 @@ export default class Progress extends Component {
     
     renderProgress () {
         const progressItemStyle = {
-           //  进度条的进度分成100份
             width: `${this.state.current}%`,
             height: '100%',
             backgroundImage:`linear-gradient(to right, ${this.props.Color1} , ${this.props.Color2})`

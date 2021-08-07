@@ -1,13 +1,14 @@
 import React from 'react';
 import './Countdown.css'
-
+import Axios from 'axios'
 class Countdown extends React.Component{
     constructor(props){
       super(props)
       this.state={
         minute:0,
         second:0,
-        wholeTime:0
+        wholeTime:0,
+        trans:0
       }
       this.run = this.run.bind(this)
       this.start = this.start.bind(this)
@@ -37,6 +38,9 @@ class Countdown extends React.Component{
         }) 
       }
       let trans = this.state.wholeTime-this.state.minute*60-this.state.second
+      this.setState({
+        trans
+      })
       this.props.getCurTime(trans)
     }
     start=()=>{
@@ -49,7 +53,11 @@ class Countdown extends React.Component{
     }
 
     finished=()=>{
-        console.log(this.id)
+        Axios.put("http://localhost:3001/finished-task",{
+            task:this.props.taskName,
+            trans:this.state.trans
+        })
+        console.log("the task name is: "+this.props.taskName)
         if(this.id===this.pre)
           return;
         this.pre=this.id
