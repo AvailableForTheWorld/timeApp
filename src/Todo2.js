@@ -77,7 +77,7 @@ class Todo2 extends React.Component {
     }
     render(){
         return (
-            <div>
+            <div className="center">
                 <form onSubmit={this.handleSubmit}>
                     <input type="text" placeholder="todo" ref={this.taskInput}/>
                     <input type="text" placeholder="time cost" ref={this.time}/>

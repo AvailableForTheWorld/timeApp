@@ -42,13 +42,9 @@ export default class Progress extends Component {
             color: '#000'
             
         };
-
-       
         const progressArticleStyle = {
             height: 17,
             border: `1px solid ${this.props.backColor}`,
-            
-            
             width: `${this.props.width}`,
             display: 'flex',
             borderRadius: 5,

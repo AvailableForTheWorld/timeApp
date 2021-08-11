@@ -32,7 +32,7 @@ class Tick extends React.Component {
 
     render(){
         return(
-        <div>
+        <div className="title">
             <h1 style={{marginTop:100,marginBottom:50}}><span className="time-span">
                 {this.state.hours<10? '0'+this.state.hours : this.state.hours}</span>&nbsp; :
                 &nbsp;<span className="time-span">{this.state.minutes<10?'0'+this.state.minutes:this.state.minutes}</span>&nbsp; :

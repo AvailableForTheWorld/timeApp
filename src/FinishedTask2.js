@@ -120,7 +120,7 @@ class FinishedTask2 extends React.Component {
         
         return (
             
-            <div>
+            <div className="center">
                 
                 <div>
                     {

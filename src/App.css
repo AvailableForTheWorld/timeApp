@@ -4,12 +4,24 @@ html,.App{
 }
 *{
   font-family: 'Courier New', 'Courier', 'monospace';
+  list-style:none;
 }
 
 .title {
   text-align: center;
-
 }
+
+.center{
+  position: absolute;
+  margin:auto;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 500px;
+  height: 500px;
+}
+
 
 .time-span{
   border: 2px solid #fff;
@@ -24,8 +36,24 @@ input {
   height: 50px;
   margin: 10px;
 }
+.nav-ul a {
+  display: inline-block;
+  color:white;
+  font-weight: bold;
+  height: 40px;
+  line-height: 40px;
+  padding: 10px 25px;
+  border-radius: 15px;
+  font-size: 20px;
+  text-decoration: none;
+}
 
 
-
-
+.nav-ul{
+  overflow: hidden;
+}
+.nav-ul li{
+  float:left;
+  margin: 0 10px;
+}
 

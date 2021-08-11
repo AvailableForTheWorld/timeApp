@@ -1,5 +1,7 @@
 import React from 'react'
 import Axios from "axios"
+import "./Goal.css"
+import "./App.css"
 class Goals2 extends React.Component {
     constructor(props){
         super(props)
@@ -214,10 +216,10 @@ class Goals2 extends React.Component {
     render(){
          
         return (
-            <div>
+            <div className="center">
                 <form onSubmit={this.handleSubmit}>
-                    <input type="text" placeholder="input your goals" ref={this.goals} />
-                    <input type="submit" value="Go"/>
+                    <input className="input" type="text" placeholder="input your goals" ref={this.goals} />
+                    <input className="goal-btn" type="submit" value="Go"/>
                 </form>
                 
                 {
@@ -231,7 +233,7 @@ class Goals2 extends React.Component {
                             
                             <span >
                                 {
-                                    this.state.tasklist[index]?
+                                    this.state.tasklist[index][0]!==null?
                                     this.state.tasklist[index].map((val,i)=>{
                                         return <span key={i} onMouseEnter={()=>this.handleMouseEnter(index,i)} 
                                         onMouseLeave={this.handleMouseLeave}><span style={{display:'inline-block',padding:'0 10px 0 10px',height:'100%',lineHeight:'30px',backgroundColor:`${this.state.bgcolor1[index%this.state.bgcolor1.length]}`}}>{val}</span>
